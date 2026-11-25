@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cadastro / Alteração de Jogo</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body class="pagina-formulario">
+    <div class="site-container">
+        <header>
+            <h1>Gerenciador de Jogos de Videogame</h1>
+        </header>
+
+        <main>
+            <div
+                id="mensagemErroForm"
+                class="mensagem-alerta"
+                role="alert"
+            ></div>
+
+            <section class="form-container">
+                <h2 id="tituloFormulario">Incluir novo jogo</h2>
+
+                <form id="jogoForm" novalidate>
+                    <div class="campo">
+                        <label class="titulo-campo" for="titulo">
+                            Título
+                        </label>
+
+                        <input
+                            type="text"
+                            id="titulo"
+                            name="titulo"
+                            maxlength="150"
+                        >
+
+                        <p id="err-titulo" class="error-msg"></p>
+                    </div>
+
+                    <div class="campo">
+                        <label class="titulo-campo" for="anoLancamento">
+                            Ano de lançamento
+                        </label>
+
+                        <input
+                            type="number"
+                            id="anoLancamento"
+                            name="anoLancamento"
+                        >
+
+                        <p id="err-anoLancamento" class="error-msg"></p>
+                    </div>
+
+                    <div class="campo">
+                        <label class="titulo-campo" for="plataforma">
+                            Plataforma
+                        </label>
+
+                        <input
+                            type="text"
+                            id="plataforma"
+                            name="plataforma"
+                            maxlength="100"
+                        >
+
+                        <p id="err-plataforma" class="error-msg"></p>
+                    </div>
+
+                    <div class="campo">
+                        <span class="titulo-campo" id="rotuloDisponivel">
+                            Disponível
+                        </span>
+
+                        <div
+                            class="radio-group"
+                            role="group"
+                            aria-labelledby="rotuloDisponivel"
+                        >
+                            <label>
+                                <input
+                                    type="radio"
+                                    name="disponivel"
+                                    value="true"
+                                    checked
+                                >
+                                Sim
+                            </label>
+
+                            <label>
+                                <input
+                                    type="radio"
+                                    name="disponivel"
+                                    value="false"
+                                >
+                                Não
+                            </label>
+                        </div>
+
+                        <p id="err-disponivel" class="error-msg"></p>
+                    </div>
+
+                    <div class="campo campo-observacoes">
+                        <label class="titulo-campo" for="observacoes">
+                            Observações
+                        </label>
+
+                        <textarea
+                            id="observacoes"
+                            name="observacoes"
+                            maxlength="500"
+                        ></textarea>
+
+                        <p id="err-observacoes" class="error-msg"></p>
+                    </div>
+
+                    <div class="form-botoes">
+                        <button type="submit" class="btn btn-primario">
+                            Salvar
+                        </button>
+                    </div>
+                </form>
+            </section>
+        </main>
+
+        <footer>
+            <div>
+                Daniel Paulo Silva de Oliveira /
+                Matheus Medeiros Barbosa Novaes /
+                TADS 3B Noturno / 2026
+            </div>
+
+            <div>
+                Usou IA: SIM — Gemini (Google): apoio no backend,
+                validações e frontend. Aura (Auramind):
+                ajustes de HTML e CSS conforme o modelo.
+            </div>
+        </footer>
+    </div>
+
+    <script>
+        const params = new URLSearchParams(window.location.search);
+        const jogoId = params.get('id');
+
+        document.addEventListener('DOMContentLoaded', async () => {
+            if (jogoId) {
+                document.getElementById('tituloFormulario').textContent =
+                    `Alterar jogo - ID ${jogoId}`;
+
+                await carregarDadosParaEdicao(jogoId);
+            }
+        });
+
+        async function carregarDadosParaEdicao(id) {
+            try {
+                const resp = await fetch(`/jogos/${id}`);
+
+                if (!resp.ok) {
+                    exibirErroGeral(
+                        'Não foi possível carregar os dados do jogo.'
+                    );
+                    return;
+                }
+
+                const jogo = await resp.json();
+
+                document.getElementById('titulo').value =
+                    jogo.titulo ?? '';
+
+                document.getElementById('anoLancamento').value =
+                    jogo.anoLancamento ?? '';
+
+                document.getElementById('plataforma').value =
+                    jogo.plataforma ?? '';
+
+                document.getElementById('observacoes').value =
+                    jogo.observacoes ?? '';
+
+                const radioVal = jogo.disponivel ? 'true' : 'false';
+
+                const radioEl = document.querySelector(
+                    `input[name="disponivel"][value="${radioVal}"]`
+                );
+
+                if (radioEl) {
+                    radioEl.checked = true;
+                }
+            } catch (err) {
+                exibirErroGeral(
+                    'Erro de conexão ao carregar dados do jogo.'
+                );
+            }
+        }
+
+        document.getElementById('jogoForm')
+            .addEventListener('submit', async (evt) => {
+                evt.preventDefault();
+                limparErros();
+
+                const anoStr = document.getElementById('anoLancamento')
+                    .value.trim();
+
+                const disponivelEl = document.querySelector(
+                    'input[name="disponivel"]:checked'
+                );
+
+                const dados = {
+                    titulo: document.getElementById('titulo').value,
+                    anoLancamento: anoStr === '' ? null : Number(anoStr),
+                    plataforma: document.getElementById('plataforma').value,
+                    disponivel: disponivelEl
+                        ? disponivelEl.value === 'true'
+                        : null,
+                    observacoes: document.getElementById('observacoes').value
+                };
+
+                const url = jogoId ? `/jogos/${jogoId}` : '/jogos';
+                const metodo = jogoId ? 'PUT' : 'POST';
+
+                try {
+                    const response = await fetch(url, {
+                        method: metodo,
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify(dados)
+                    });
+
+                    if (!response.ok) {
+                        const corpoErro = await response.json()
+                            .catch(() => null);
+
+                        exibirErroGeral(
+                            'Erro ao salvar o jogo. Verifique os campos destacados abaixo.'
+                        );
+
+                        if (corpoErro && corpoErro.errors) {
+                            exibirErrosCampos(corpoErro.errors);
+                        }
+
+                        return;
+                    }
+
+                    const acao = jogoId ? 'alterado' : 'cadastrado';
+
+                    sessionStorage.setItem(
+                        'msgSucesso',
+                        `Jogo ${acao} com sucesso!`
+                    );
+
+                    window.location.href = 'index.html';
+                } catch (err) {
+                    exibirErroGeral(
+                        'Não foi possível conectar ao servidor.'
+                    );
+                }
+            });
+
+        function limparErros() {
+            document.querySelectorAll('.error-msg').forEach(p => {
+                p.textContent = '';
+            });
+
+            const alerta = document.getElementById('mensagemErroForm');
+            alerta.textContent = '';
+            alerta.className = 'mensagem-alerta';
+        }
+
+        function exibirErroGeral(texto) {
+            const alerta = document.getElementById('mensagemErroForm');
+            alerta.textContent = texto;
+            alerta.className = 'mensagem-alerta mensagem-erro';
+        }
+
+        function exibirErrosCampos(erros) {
+            for (const erro of erros) {
+                const el = document.getElementById(`err-${erro.field}`);
+
+                if (el) {
+                    el.textContent = erro.defaultMessage;
+                }
+            }
+        }
+    </script>
+</body>
+</html>

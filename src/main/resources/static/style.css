@@ -1,0 +1,461 @@
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    background: #fff;
+    color: #000;
+    font-family: Calibri, "Segoe UI", Arial, sans-serif;
+    font-size: 21px;
+}
+
+.site-container {
+    width: calc(100% - 32px);
+    max-width: 634px;
+    margin: 28px auto;
+    border: 2px solid #222;
+    background: #f2f2f2;
+}
+
+header {
+    padding: 7px 12px 12px;
+    text-align: center;
+}
+
+header h1 {
+    margin: 0;
+    font-size: 30px;
+    line-height: 1.3;
+    font-weight: 400;
+}
+
+main {
+    margin: 0 29px;
+    padding-bottom: 54px;
+}
+
+.card-jogo {
+    position: relative;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 20px;
+    min-height: 120px;
+    padding: 7px 22px 10px 9px;
+    margin-bottom: 15px;
+    border: 1.5px solid #45647b;
+    background: #fff;
+}
+
+.jogo-info {
+    flex: 1;
+    min-width: 0;
+}
+
+.jogo-info h2 {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 4px 10px;
+    margin: 0;
+    font-size: 22px;
+    line-height: 1.3;
+    font-weight: 700;
+    overflow-wrap: anywhere;
+}
+
+.jogo-info p {
+    margin: 0;
+    font-size: 22px;
+    line-height: 1.3;
+    font-weight: 700;
+    overflow-wrap: anywhere;
+}
+
+.jogo-info p:nth-of-type(n+3) {
+    display: none;
+}
+
+.badge-indisponivel {
+    background: #ff873c;
+    border: 1px solid #82502e;
+    color: #fff;
+    padding: 3px 12px;
+    font-size: 17px;
+    font-weight: 400;
+    white-space: nowrap;
+}
+
+.jogo-acoes {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    flex: 0 0 122px;
+    padding-top: 7px;
+}
+
+.btn {
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 30px;
+    padding: 2px 12px;
+    border: 1.5px solid #3f5c70;
+    border-radius: 6px;
+    text-decoration: none;
+    text-align: center;
+    cursor: pointer;
+    font: inherit;
+    font-size: 23px;
+    line-height: 1.1;
+}
+
+.btn-primario {
+    background: #579bd3;
+    color: #fff;
+}
+
+.btn-perigo {
+    background: #d7190c;
+    color: #fff;
+    border-color: #804534;
+}
+
+.btn-secundario {
+    background: #808080;
+    color: #fff;
+}
+
+.btn:hover {
+    filter: brightness(.94);
+}
+
+.btn:focus-visible,
+input:focus-visible,
+textarea:focus-visible {
+    outline: 3px solid #22699c;
+    outline-offset: 3px;
+}
+
+.barra-acoes-topo {
+    text-align: center;
+    margin-top: 20px;
+}
+
+.barra-acoes-topo .btn {
+    min-width: 265px;
+    min-height: 35px;
+}
+
+footer {
+    border-top: 1.5px solid #45647b;
+    padding: 11px 16px;
+    background: #808080;
+    color: #fff;
+    text-align: center;
+    font-size: 18px;
+    line-height: 1.35;
+    overflow-wrap: anywhere;
+}
+
+footer div + div {
+    margin-top: 3px;
+}
+
+.pagina-formulario main {
+    padding-bottom: 38px;
+}
+
+.form-container {
+    background: #fff;
+    border: 1.5px solid #45647b;
+    padding: 6px 9px 25px;
+}
+
+.form-container h2 {
+    margin: 0 0 18px;
+    font-size: 25px;
+    line-height: 1.3;
+}
+
+#jogoForm {
+    padding: 0 13px;
+}
+
+.campo {
+    display: grid;
+    grid-template-columns: 175px minmax(0, 1fr);
+    gap: 0 12px;
+    align-items: center;
+    margin-bottom: 18px;
+}
+
+.titulo-campo {
+    font-weight: 400;
+    font-size: 21px;
+}
+
+.campo input[type="text"],
+.campo input[type="number"],
+.campo textarea {
+    width: 100%;
+    min-width: 0;
+    font: inherit;
+    font-size: 23px;
+    color: #000;
+    background: #fff;
+    border: 1.5px solid #222;
+    border-radius: 8px;
+    padding: 6px 11px;
+}
+
+.campo input[type="text"],
+.campo input[type="number"] {
+    height: 43px;
+}
+
+.campo input[type="number"] {
+    appearance: textfield;
+    -moz-appearance: textfield;
+}
+
+.campo input::-webkit-inner-spin-button,
+.campo input::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+.radio-group {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    min-height: 44px;
+    padding-right: 45px;
+    gap: 15px;
+}
+
+.radio-group label {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+}
+
+.radio-group input {
+    appearance: none;
+    width: 32px;
+    height: 32px;
+    border: 1.5px solid #111;
+    border-radius: 50%;
+    background: #fff;
+    margin: 0;
+    cursor: pointer;
+    flex-shrink: 0;
+}
+
+.radio-group input:checked {
+    background: #000;
+}
+
+.campo-observacoes {
+    display: block;
+    margin-top: 15px;
+}
+
+.campo-observacoes .titulo-campo {
+    display: block;
+    margin-bottom: 17px;
+}
+
+.campo textarea {
+    display: block;
+    min-height: 108px;
+    border-radius: 18px;
+    padding: 11px 14px;
+    resize: vertical;
+}
+
+.error-msg {
+    grid-column: 2;
+    color: #b61b12;
+    font-size: 15px;
+    margin: 4px 0 0;
+}
+
+.error-msg:empty {
+    display: none;
+}
+
+.form-botoes {
+    display: flex;
+    justify-content: center;
+    margin-top: 20px;
+}
+
+.form-botoes .btn {
+    min-width: 216px;
+    min-height: 58px;
+    border-radius: 11px;
+}
+
+.mensagem-alerta {
+    display: none;
+    padding: 10px 12px;
+    margin-bottom: 15px;
+    border: 1px solid;
+    font-size: 18px;
+}
+
+.mensagem-sucesso {
+    display: block;
+    background: #e4f2e5;
+    color: #205629;
+    border-color: #76a37e;
+}
+
+.mensagem-erro {
+    display: block;
+    background: #fde8e5;
+    color: #9c2016;
+    border-color: #cf796e;
+}
+
+.lista-vazia {
+    background: #fff;
+    border: 1.5px solid #45647b;
+    text-align: center;
+    padding: 32px 12px;
+}
+
+.modal-overlay {
+    position: fixed;
+    inset: 0;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    background: transparent;
+    z-index: 1000;
+}
+
+.modal-overlay.ativo {
+    display: flex;
+}
+
+.modal-box {
+    width: min(390px, calc(100% - 32px));
+    border: 4px solid #000;
+    background: #fff;
+    padding: 5px 25px 23px;
+    text-align: center;
+    box-shadow: 3px 3px 4px #0007;
+}
+
+.modal-box p {
+    margin: 0 0 33px;
+    font-size: 23px;
+    line-height: 1.4;
+}
+
+.modal-botoes {
+    display: flex;
+    justify-content: space-between;
+    gap: 20px;
+}
+
+.modal-botoes .btn {
+    min-width: 118px;
+    min-height: 38px;
+}
+
+@media (max-width: 600px) {
+    body {
+        font-size: 18px;
+    }
+
+    .site-container {
+        margin: 16px auto;
+    }
+
+    header h1 {
+        font-size: 25px;
+    }
+
+    main {
+        margin: 0 15px;
+        padding-bottom: 30px;
+    }
+
+    .card-jogo {
+        padding: 9px;
+        gap: 12px;
+    }
+
+    .jogo-info h2,
+    .jogo-info p {
+        font-size: 19px;
+    }
+
+    .jogo-acoes {
+        flex-basis: 92px;
+    }
+
+    .btn {
+        font-size: 20px;
+    }
+
+    .badge-indisponivel {
+        font-size: 14px;
+        padding: 3px 6px;
+    }
+
+    #jogoForm {
+        padding: 0 5px;
+    }
+
+    .campo {
+        grid-template-columns: 1fr;
+        gap: 7px;
+    }
+
+    .error-msg {
+        grid-column: 1;
+    }
+
+    .radio-group {
+        justify-content: flex-start;
+        gap: 40px;
+        padding: 0;
+    }
+
+    footer {
+        font-size: 16px;
+    }
+}
+
+@media (max-width: 360px) {
+    .card-jogo {
+        flex-direction: column;
+    }
+
+    .jogo-acoes {
+        flex-basis: auto;
+        flex-direction: row;
+        width: 100%;
+    }
+
+    .jogo-acoes .btn {
+        flex: 1;
+    }
+
+    .barra-acoes-topo .btn {
+        min-width: 0;
+        width: 100%;
+    }
+
+    .modal-botoes .btn {
+        min-width: 0;
+        flex: 1;
+    }
+}

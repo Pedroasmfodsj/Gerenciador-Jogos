@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gerenciador de Jogos de Videogame</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body class="pagina-listagem">
+    <div class="site-container">
+        <header>
+            <h1>Gerenciador de Jogos de Videogame</h1>
+        </header>
+
+        <main>
+            <div id="mensagemGlobal" class="mensagem-alerta" role="alert"></div>
+
+            <section id="listaJogos"></section>
+
+            <div class="barra-acoes-topo">
+                <a href="form.html" class="btn btn-primario">
+                    Incluir novo jogo
+                </a>
+            </div>
+        </main>
+
+        <div
+            id="modalExclusao"
+            class="modal-overlay"
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="textoConfirmacao"
+        >
+            <div class="modal-box">
+                <p id="textoConfirmacao">Deseja excluir o jogo?</p>
+
+                <div class="modal-botoes">
+                    <button
+                        type="button"
+                        id="btnConfirmarSim"
+                        class="btn btn-primario"
+                    >
+                        SIM
+                    </button>
+
+                    <button
+                        type="button"
+                        id="btnConfirmarNao"
+                        class="btn btn-perigo"
+                    >
+                        NÃO
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <footer>
+            <div>
+                Daniel Paulo Silva de Oliveira /
+                Matheus Medeiros Barbosa Novaes /
+                TADS 3B Noturno / 2026
+            </div>
+
+            <div>
+                Usou IA: SIM — Gemini (Google): apoio no backend,
+                validações e frontend. Aura (Auramind):
+                ajustes de HTML e CSS conforme o modelo.
+            </div>
+        </footer>
+    </div>
+
+    <script>
+        let idParaExcluir = null;
+
+        document.addEventListener('DOMContentLoaded', () => {
+            verificarMensagemSessao();
+            carregarJogos();
+        });
+
+        function verificarMensagemSessao() {
+            const msgSucesso = sessionStorage.getItem('msgSucesso');
+
+            if (msgSucesso) {
+                exibirMensagem(msgSucesso, 'sucesso');
+                sessionStorage.removeItem('msgSucesso');
+            }
+        }
+
+        function exibirMensagem(texto, tipo) {
+            const el = document.getElementById('mensagemGlobal');
+
+            el.textContent = texto;
+            el.className = 'mensagem-alerta ' +
+                (tipo === 'sucesso' ? 'mensagem-sucesso' : 'mensagem-erro');
+        }
+
+        async function carregarJogos() {
+            const container = document.getElementById('listaJogos');
+
+            try {
+                const resp = await fetch('/jogos');
+
+                if (!resp.ok) {
+                    throw new Error('Erro HTTP ' + resp.status);
+                }
+
+                const jogos = await resp.json();
+
+                if (jogos.length === 0) {
+                    container.innerHTML = `
+                        <div class="lista-vazia">
+                            Nenhum jogo cadastrado no momento.
+                        </div>
+                    `;
+                    return;
+                }
+
+                container.innerHTML = '';
+
+                for (const jogo of jogos) {
+                    const isIndisponivel = !jogo.disponivel;
+
+                    const cardClass = isIndisponivel
+                        ? 'card-jogo indisponivel'
+                        : 'card-jogo';
+
+                    const badgeHtml = isIndisponivel
+                        ? '<span class="badge-indisponivel">INDISPONÍVEL</span>'
+                        : '';
+
+                    const obsHtml = jogo.observacoes
+                        ? `<p><strong>Observações:</strong> ${escaparHtml(jogo.observacoes)}</p>`
+                        : '';
+
+                    container.insertAdjacentHTML('beforeend', `
+                        <article class="${cardClass}">
+                            <div class="jogo-info">
+                                <h2>
+                                    ${escaparHtml(jogo.titulo)}
+                                    ${badgeHtml}
+                                </h2>
+
+                                <p>
+                                    <strong>Ano de lançamento:</strong>
+                                    ${jogo.anoLancamento}
+                                </p>
+
+                                <p>
+                                    <strong>Plataforma:</strong>
+                                    ${escaparHtml(jogo.plataforma)}
+                                </p>
+
+                                ${obsHtml}
+                            </div>
+
+                            <div class="jogo-acoes">
+                                <a
+                                    href="form.html?id=${jogo.id}"
+                                    class="btn btn-primario"
+                                >
+                                    Alterar
+                                </a>
+
+                                <button
+                                    type="button"
+                                    class="btn btn-perigo"
+                                    onclick="abrirModalExclusao(${jogo.id})"
+                                >
+                                    Excluir
+                                </button>
+                            </div>
+                        </article>
+                    `);
+                }
+            } catch (err) {
+                exibirMensagem(
+                    'Erro ao carregar lista de jogos: ' + err.message,
+                    'erro'
+                );
+            }
+        }
+
+        function abrirModalExclusao(id) {
+            idParaExcluir = id;
+
+            document.getElementById('textoConfirmacao').textContent =
+                `Deseja excluir o jogo ID ${id}?`;
+
+            document.getElementById('modalExclusao')
+                .classList.add('ativo');
+        }
+
+        function fecharModalExclusao() {
+            idParaExcluir = null;
+
+            document.getElementById('modalExclusao')
+                .classList.remove('ativo');
+        }
+
+        document.getElementById('btnConfirmarNao')
+            .addEventListener('click', () => {
+                fecharModalExclusao();
+            });
+
+        document.getElementById('btnConfirmarSim')
+            .addEventListener('click', async () => {
+                if (idParaExcluir === null) {
+                    return;
+                }
+
+                const id = idParaExcluir;
+                fecharModalExclusao();
+
+                try {
+                    const resp = await fetch(`/jogos/${id}`, {
+                        method: 'DELETE'
+                    });
+
+                    if (resp.ok) {
+                        exibirMensagem(
+                            `Jogo ID ${id} excluído com sucesso!`,
+                            'sucesso'
+                        );
+
+                        await carregarJogos();
+                    } else {
+                        exibirMensagem(
+                            'Erro ao excluir o jogo. Status HTTP: ' +
+                                resp.status,
+                            'erro'
+                        );
+                    }
+                } catch (err) {
+                    exibirMensagem(
+                        'Falha de comunicação com o servidor ao excluir.',
+                        'erro'
+                    );
+                }
+            });
+
+        function escaparHtml(texto) {
+            if (!texto) {
+                return '';
+            }
+
+            const div = document.createElement('div');
+            div.textContent = texto;
+
+            return div.innerHTML;
+        }
+    </script>
+</body>
+</html>
